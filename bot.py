@@ -12,6 +12,7 @@ bot.remove_command('help')
 
 LAST_ARCHIVED = datetime.date(2020, 7, 4)
 DATA_URL = "https://mapa.covid.chat/export/csv"
+CONFIG_FILE = "config.yaml"
 
 #TODO
 # date formatting
@@ -87,15 +88,20 @@ async def info_error(ctx, error):
     await ctx.send("```Usage: !info <year> <month> <day>```")
 
 
+@bot.command(name='ping')
+async def ping(ctx) -> None:
+    await ctx.send("```Pong!```")
+
+
 def main():
-    if not os.path.isfile("config.yaml"):
+    if not os.path.isfile(CONFIG_FILE):
         print("No configuration file found.")
         print("Please enter your connection string into the file and rerun the program.")
         data = {"connection_string" : ""}
-        with open("config.yaml", "w") as new_file:
+        with open(CONFIG_FILE, "w") as new_file:
             yaml.dump(data, new_file)
     else:
-        with open("config.yaml", "r") as config_file:
+        with open(CONFIG_FILE, "r") as config_file:
             config = yaml.safe_load(config_file)
         bot.run(config["connection_string"])
 
