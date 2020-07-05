@@ -16,13 +16,9 @@ DATA_URL = "https://mapa.covid.chat/export/csv"
 #TODO
 # date formatting
 # arguments for command
+# check for required pip libs
 
 def get_csv() -> bool:
-    """
-    Checks whether there is a newer version of covid data .csv file on korona.gov.sk,
-    if it finds one then it downloads and updates data.
-    ALTERNATIVE: do a script that runs and select time that updates the data and dl's the .csv file.
-    """
     try:
         urllib.request.urlretrieve(DATA_URL, "data.csv")
         LAST_ARCHIVED = datetime.date.today()
@@ -57,6 +53,7 @@ def format_data(date_str: str, row: dict) -> discord.Embed:
 @bot.event
 async def on_ready():
     await bot.change_presence(activity=discord.Game(name="!help for a list of commands"))
+    print("Battlecruiser operational.")
 
 
 @bot.command(name='help')
