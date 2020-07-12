@@ -77,7 +77,7 @@ async def on_ready():
 async def help_msg(ctx) -> None:
     m_embed = discord.Embed()
     m_embed.add_field(name="Commands", 
-                      value="help, source, info (WIP)")
+                      value="help, source, info (WIP), graph")
     await ctx.send(embed=m_embed)
 
 
@@ -95,7 +95,6 @@ async def display_graph(ctx):
     make_graph(parse_csv())
     await ctx.send("", file=discord.File(GRAPH_FILE))
     os.remove(GRAPH_FILE)
-
 
 
 @bot.command(name='info')
@@ -139,7 +138,6 @@ def main():
         with open(CONFIG_FILE, "r") as config_file:
             config = yaml.safe_load(config_file)
         bot.run(config["connection_string"])
-    #make_graph(parse_csv())
 
 
 if __name__ == "__main__":
