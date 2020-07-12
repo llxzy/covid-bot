@@ -6,6 +6,7 @@ import os
 import yaml
 import urllib.request
 from discord.ext import commands
+import matplotlib.pyplot as plt
 
 
 """----------CONSTANTS AND GLOBAL VARIABLES----------"""
@@ -17,6 +18,7 @@ LAST_ARCHIVED = datetime.date(1970, 1, 1)
 DATA_URL = "https://mapa.covid.chat/export/csv"
 CONFIG_FILE = "./config.yaml"
 CSV_FILE = "./data.csv"
+GRAPH_FILE = "./plot.png"
 
 
 
@@ -47,6 +49,19 @@ def format_data(date_str: str, row: dict) -> discord.Embed:
     return embed
 
 
+def make_graph(csv_data) -> None:
+    sick = []
+    days = []
+    for i in csv_data:
+        sick.append(int(i["Dennych prirastkov"]))
+        date_val = i["Datum"].split("-")
+        days.append(date_val[0] + "-" + date_val[1])
+    plt.title("COVID-19 cases in Slovakia")
+    plt.locator_params(nbins=10)
+    plt.plot(days, sick, color='red')
+    plt.xticks([j for j in range(1, len(days) + 1, 30)])
+    plt.savefig(GRAPH_FILE)
+
 
 
 """----------BOT EVENTS AND COMMANDS----------"""
@@ -62,7 +77,7 @@ async def on_ready():
 async def help_msg(ctx) -> None:
     m_embed = discord.Embed()
     m_embed.add_field(name="Commands", 
-                      value="help, source, info (WIP)")
+                      value="help, source, info (WIP), graph")
     await ctx.send(embed=m_embed)
 
 
@@ -72,6 +87,14 @@ async def source_msg(ctx) -> None:
     m_embed.add_field(name="Source code available at:",
                       value="https://github.com/llxzy/covid-bot")
     await ctx.send(embed=m_embed)
+
+
+@bot.command(name='graph')
+async def display_graph(ctx):
+    get_csv()
+    make_graph(parse_csv())
+    await ctx.send("", file=discord.File(GRAPH_FILE))
+    os.remove(GRAPH_FILE)
 
 
 @bot.command(name='info')
