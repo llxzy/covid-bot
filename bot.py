@@ -49,16 +49,18 @@ def format_data(date_str: str, row: dict) -> discord.Embed:
     return embed
 
 
-def make_graph(csv_data) -> None:
-    sick = []
+def make_graph(csv_data: dict) -> None:
+    daily_cases = []
     days = []
-    for i in csv_data:
-        sick.append(int(i["Dennych prirastkov"]))
-        date_val = i["Datum"].split("-")
+    for row in csv_data:
+        daily_cases.append(int(row["Dennych prirastkov"]))
+        date_val = row["Datum"].split("-")
         days.append(date_val[0] + "-" + date_val[1])
+
+    # graph setup
     plt.title("COVID-19 cases in Slovakia")
     plt.locator_params(nbins=10)
-    plt.plot(days, sick, color='red')
+    plt.plot(days, daily_cases, color='red')
     plt.xticks([j for j in range(1, len(days) + 1, 30)])
     plt.savefig(GRAPH_FILE)
 
